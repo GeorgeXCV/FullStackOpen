@@ -1,0 +1,13 @@
+title Single Page App (Create Note)
+
+note over browser
+    User enters text and clicks "Save".
+end note
+
+browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+
+server->browser: 201 Status Response
+
+note over browser
+    Note is created and rendered on page without refresh.
+end note
