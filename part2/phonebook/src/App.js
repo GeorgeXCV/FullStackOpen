@@ -1,16 +1,29 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect  } from 'react'
+import axios from 'axios'
 import ContactForm from "./Components/ContactForm";
 import Contacts from "./Components/Contacts";
 import Filter from "./Components/Filter";
 
 const App = () => {
-  const [ persons, setPersons ] = useState([
-    { name: 'Arto Hellas', number: '040-1234567' }
-  ]) 
+  const [ persons, setPersons ] = useState([]) 
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ newSearch, setNewSearch ] = useState('')
   const [ newFilter, setNewFilter ] = useState('')
+
+  useEffect(() => {
+  
+    async function getContacts() {
+      try {
+        const contacts = await axios.get('http://localhost:3001/persons')
+        setPersons(contacts.data)
+      } catch (error) {
+        console.log(`Failed to fetch contacts. Error: ${error}`)
+      }
+    }
+
+    getContacts();
+  })
 
   const addPerson = (event) => {
     event.preventDefault();
