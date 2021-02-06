@@ -1,2 +1,2 @@
 # FullStackOpen
-FullStackOpen 2020
+My submissions for https://fullstackopen.com/en/
