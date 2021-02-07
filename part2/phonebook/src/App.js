@@ -2,7 +2,9 @@ import React, { useState, useEffect  } from 'react'
 import ContactForm from "./Components/ContactForm";
 import Contacts from "./Components/Contacts";
 import Filter from "./Components/Filter";
+import Notification from "./Components/Notification";
 import contactsService from './Services/contacts'
+import './App.css'
 
 const App = () => {
   const [ persons, setPersons ] = useState([]) 
@@ -10,6 +12,7 @@ const App = () => {
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ newSearch, setNewSearch ] = useState('')
+  const [message, setMessage] = useState(null)
 
   useEffect(() => {
   
@@ -26,27 +29,42 @@ const App = () => {
     getContacts();
   },[persons.length])
 
+  
+  useEffect(() => {
+    setTimeout(() => {setMessage(null)}, 5000)
+  },[message !== null])
+
   async function addPerson (event) {
-    event.preventDefault();
-    const newPerson = {
-      name : newName,
-      number: newNumber
-    }
-    const person = searchPeople(newName);
-    if (person !== -1) {
-      if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
-        setPersons(persons.concat(await contactsService.update(persons[person].id, newPerson)));
+    try {
+      event.preventDefault();
+      const newPerson = {
+        name : newName,
+        number: newNumber
       }
-    } else {
-      setPersons(persons.concat(await contactsService.create(newPerson)));
+      const person = searchPeople(newName);
+      if (person !== -1) {
+        if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
+          setPersons(persons.concat(await contactsService.update(persons[person].id, newPerson)));
+        }
+      } else {
+        setPersons(persons.concat(await contactsService.create(newPerson)));
+      }
+      setNewName('')
+      setNewNumber('')
+      setMessage({text: `Added ${newName}`, type: 'notification'}) 
+    } catch (error) {
+      setMessage({text: `Failed to add "${newName}" as a contact.`, type: 'error'}) 
     }
-    setNewName('')
-    setNewNumber('')
   }
 
   async function deletePerson (name, id) {
-    if (window.confirm(`Delete ${name}?`)) {
-        setPersons(persons.concat(await contactsService.deleteContact(id)))
+    try {
+        if (window.confirm(`Delete ${name}?`)) {
+          setPersons(persons.concat(await contactsService.deleteContact(id)))
+          setMessage({text: `Deleted ${name}`, type: 'notification'})     
+        }
+    } catch (error) {
+      setMessage({text: `Contact: "${name}" was already removed from server`, type: 'error'}) 
     }
   }
 
@@ -72,6 +90,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+        <Notification message={message} />
         <Filter query={newSearch} handleSearchChange={handleSearchChange} />
         <div>
           <h3>Add New Contact</h3>
