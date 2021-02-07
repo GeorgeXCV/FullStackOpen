@@ -1,19 +1,10 @@
 import React from 'react';
-import Contact from "./Contact";
+import Button from "./Button";
 
-const Contacts = ({names, filter}) => {
-    if (filter.length < 1) {
-      return names.map(name => 
+const Contacts = ({filteredContacts, deleteContact}) => {
+      return filteredContacts.map(contact => 
         (
-          <Contact name={name.name} number={name.number}/>   
-        ))
-    } else {
-      return filter.map(name => 
-        (
-          <Contact name={name.name} number={name.number}/>   
+          <p key={contact.id}>{contact.name} {contact.number} <Button text="Delete" handleClick={() => deleteContact(contact.name, contact.id)}/> </p>
         ))
     }
-   
-  } 
-
 export default Contacts;

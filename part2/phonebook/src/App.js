@@ -1,42 +1,53 @@
 import React, { useState, useEffect  } from 'react'
-import axios from 'axios'
 import ContactForm from "./Components/ContactForm";
 import Contacts from "./Components/Contacts";
 import Filter from "./Components/Filter";
+import contactsService from './Services/contacts'
 
 const App = () => {
   const [ persons, setPersons ] = useState([]) 
+  const [ contactFilter, setNewContactFilter ] = useState(persons)
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ newSearch, setNewSearch ] = useState('')
-  const [ newFilter, setNewFilter ] = useState('')
 
   useEffect(() => {
   
     async function getContacts() {
       try {
-        const contacts = await axios.get('http://localhost:3001/persons')
-        setPersons(contacts.data)
+        const contacts = await contactsService.getAll();
+        setPersons(contacts);
+        setNewContactFilter(contacts);
       } catch (error) {
         console.log(`Failed to fetch contacts. Error: ${error}`)
       }
     }
 
     getContacts();
-  })
+  },[persons.length])
 
-  const addPerson = (event) => {
+  async function addPerson (event) {
     event.preventDefault();
-    if (searchPeople(newName) !== -1) {
-      window.alert(`${newName} is already added to phonebook`);
-    } else {
-      const newPerson = {
-        name : newName,
-        number: newNumber
-      }
-      setPersons(persons.concat(newPerson));
+    const newPerson = {
+      name : newName,
+      number: newNumber
     }
-    event.target.value = ''
+    const person = searchPeople(newName);
+    if (person !== -1) {
+      if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
+        setPersons(persons.concat(await contactsService.update(persons[person].id, newPerson)));
+      }
+    } else {
+      setPersons(persons.concat(await contactsService.create(newPerson)));
+    }
+    setNewName('')
+    setNewNumber('')
+  }
+
+  async function deletePerson (name, id) {
+    if (window.confirm(`Delete ${name}?`)) {
+        setPersons(persons.concat(await contactsService.deleteContact(id)))
+    }
   }
 
   const handleNameChange=(event)=>{
@@ -48,9 +59,10 @@ const App = () => {
   }
 
   const handleSearchChange=(event)=>{
-    setNewSearch(event.target.value)
-    const filter = persons.filter(person => person.name.toLowerCase().includes(newSearch.toLowerCase()));
-    setNewFilter(filter);
+       const keyword = event.target.value
+       setNewSearch(keyword)
+       const filter = !keyword.length ? persons: persons.filter(person => person.name.toLowerCase().includes(newSearch.toLowerCase()));
+       setNewContactFilter(filter);
   }
 
   const searchPeople = (name) => {
@@ -66,7 +78,7 @@ const App = () => {
           <ContactForm newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange} addPerson={addPerson} />
         </div>
       <h3>Numbers</h3>
-      <Contacts names={persons} filter={newFilter}/>
+      <Contacts filteredContacts={contactFilter} deleteContact={deletePerson}/>
     </div>
   )
 }
