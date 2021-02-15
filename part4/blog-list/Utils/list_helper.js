@@ -1,5 +1,5 @@
 const dummy = (blogs) => {
-   return 1
+  return 1
 }
 
 const totalLikes = (blogs) => {
