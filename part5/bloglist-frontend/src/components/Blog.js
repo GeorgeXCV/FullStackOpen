@@ -1,11 +1,18 @@
 import React, { useState } from 'react'
-import blogService from '../services/blogs'
 
-const Blog = ({ blog }) =>  {
+const Blog = ({ blog, handleAddLike, handleDeleteBlog }) =>  {
   const [visible, setVisible] = useState(false)
 
   const toggleVisibility = () => {
     setVisible(!visible)
+  }
+
+  const addLike = () => {
+    handleAddLike(blog)
+  }
+
+  const deleteBlog = () => {
+    handleDeleteBlog(blog)
   }
 
   const blogStyle = {
@@ -24,8 +31,9 @@ const Blog = ({ blog }) =>  {
      {visible && (
        <div> 
           <p>{blog.url}</p>
-          <p>{blog.likes} <button>Like</button></p>
+          <p>{blog.likes} <button onClick={addLike}>Like</button></p>
           <p>{blog.user.username}</p>
+          <button onClick={deleteBlog}>Remove</button>
        </div>
      )}
    </div>

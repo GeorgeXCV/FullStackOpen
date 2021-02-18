@@ -26,7 +26,7 @@ const App = () => {
     }
 
     getBlogs();
-  }, [blogs])
+  }, [])
 
   useEffect(() => {    
     const loggedUserJSON = window.localStorage.getItem('blogUser')    
@@ -77,6 +77,36 @@ const App = () => {
     }  
   }
 
+  const handleAddLike = async (blog) => {
+    try {
+      blog.likes = blog.likes + 1
+      const updatedBlog = await blogService.update(blog.id, {
+        user: blog.user.id,
+        likes: blog.likes,
+        author: blog.author,
+        title: blog.title,
+        url: blog.url
+      });
+      setBlogs(blogs.concat(updatedBlog))
+      setMessage({text: `You liked ${blog.title}`, type: 'notification'}) 
+    } catch (error) {
+      setMessage({text: `Failed to add like. Error: ${error}`, type: 'error'}) 
+    }
+}
+
+const handleDeleteBlog = async (blog) => {
+  try {
+    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}?`)) {
+      await blogService.deleteBlog(blog.id);
+      const updatedBlogsList = blogs.filter(blogIndex => blogIndex.id !== blog.id);
+      setBlogs(updatedBlogsList)
+      setMessage({text: `You deleted ${blog.title}`, type: 'notification'}) 
+   }
+  } catch (error) {
+    setMessage({text: `Failed to delete blog. Error: ${error}`, type: 'error'}) 
+  }
+}
+
   if (user === null) {
     return (
       <div>
@@ -102,8 +132,8 @@ const App = () => {
             } 
           </div>
         }    
-        {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} />
+        {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
+          <Blog key={blog.id} blog={blog} handleAddLike={handleAddLike} handleDeleteBlog={handleDeleteBlog}/>
         )}
       </div>
     )
