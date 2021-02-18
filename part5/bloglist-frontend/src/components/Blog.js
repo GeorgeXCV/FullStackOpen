@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import blogService from '../services/blogs'
 
 const Blog = ({ blog }) =>  {
   const [visible, setVisible] = useState(false)
@@ -24,6 +25,7 @@ const Blog = ({ blog }) =>  {
        <div> 
           <p>{blog.url}</p>
           <p>{blog.likes} <button>Like</button></p>
+          <p>{blog.user.username}</p>
        </div>
      )}
    </div>
