@@ -1,10 +1,15 @@
 import axios from 'axios'
+import jwt_decode from "jwt-decode";
 const baseUrl = '/api/blogs'
 
 let token = null
 
 const setToken = newToken => {  
   token = `bearer ${newToken}`
+}
+
+const getCurrrentUser = () => {
+  return jwt_decode(token);
 }
 
 const getAll = async () => {
@@ -29,5 +34,5 @@ const deleteBlog = async (id) => {
   return request.data
 }
 
-export default { getAll, create, update, deleteBlog, setToken }
+export default {  getCurrrentUser, getAll, create, update, deleteBlog, setToken }
 
