@@ -1,25 +1,25 @@
 import axios from 'axios'
-import jwt_decode from "jwt-decode";
+import jwt_decode from 'jwt-decode'
 const baseUrl = '/api/blogs'
 
 let token = null
 
-const setToken = newToken => {  
+const setToken = newToken => {
   token = `bearer ${newToken}`
 }
 
 const getCurrrentUser = () => {
-  return jwt_decode(token);
+  return jwt_decode(token)
 }
 
 const getAll = async () => {
   const request = await axios.get(baseUrl)
-  return request.data;
+  return request.data
 }
 
 const create = async (newObject) => {
   const config = { headers: { Authorization: token }, }
-  const response = await axios.post(baseUrl, newObject, config) 
+  const response = await axios.post(baseUrl, newObject, config)
   return response.data
 }
 

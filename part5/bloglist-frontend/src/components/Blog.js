@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import blogService from '../services/blogs'
 
-const Blog = ({ blog, handleAddLike, handleDeleteBlog}) =>  {
+const Blog = ({ blog, handleAddLike, handleDeleteBlog }) =>  {
   const [visible, setVisible] = useState(false)
 
   const toggleVisibility = () => {
@@ -13,7 +13,7 @@ const Blog = ({ blog, handleAddLike, handleDeleteBlog}) =>  {
   }
 
   const showDeleteButton = (blogUserID) => {
-    const loggedInUser = blogService.getCurrrentUser();
+    const loggedInUser = blogService.getCurrrentUser()
     if (loggedInUser.id === blogUserID) {
       return true
     } else {
@@ -35,24 +35,24 @@ const Blog = ({ blog, handleAddLike, handleDeleteBlog}) =>  {
 
   return (
     <div style={blogStyle}>
-    <div>
-      <p>{blog.title} {blog.author} <button onClick={toggleVisibility}>view</button></p>
-    </div>
-     {visible && (
-       <div> 
+      <div>
+        <p>{blog.title} {blog.author} <button onClick={toggleVisibility}>view</button></p>
+      </div>
+      {visible && (
+        <div>
           <p>{blog.url}</p>
           <p>{blog.likes} <button onClick={addLike}>Like</button></p>
           <p>{blog.user.username}</p>
           {showDeleteButton(blog.user.id) && (
-              <button onClick={deleteBlog}>Remove</button>
+            <button onClick={deleteBlog}>Remove</button>
           )
           }
-       </div>
-     )}
-   </div>
+        </div>
+      )}
+    </div>
   )
 }
-  
- 
+
+
 
 export default Blog
