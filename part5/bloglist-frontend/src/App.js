@@ -112,7 +112,7 @@ const App = () => {
       <div>
         <h1>Blogs</h1>
         <Notification message={message} />
-        <h2>Log in to application</h2>
+        <h2>Login to application</h2>
         <LoginForm handleLogin={handleLogin} />
       </div>
     )

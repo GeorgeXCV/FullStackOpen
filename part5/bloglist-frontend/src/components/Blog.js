@@ -13,11 +13,15 @@ const Blog = ({ blog, handleAddLike, handleDeleteBlog }) =>  {
   }
 
   const showDeleteButton = (blogUserID) => {
-    const loggedInUser = blogService.getCurrrentUser()
-    if (loggedInUser.id === blogUserID) {
-      return true
-    } else {
-      return false
+    try {
+      const loggedInUser = blogService.getCurrrentUser()
+      if (loggedInUser.id === blogUserID) {
+        return true
+      } else {
+        return false
+      }
+    } catch (error) {
+      console.log(`Failed to determine user delete permissions. Error: ${error}`)
     }
   }
 
@@ -36,15 +40,15 @@ const Blog = ({ blog, handleAddLike, handleDeleteBlog }) =>  {
   return (
     <div style={blogStyle}>
       <div>
-        <p>{blog.title} {blog.author} <button onClick={toggleVisibility}>view</button></p>
+        <p className="headline">{blog.title} {blog.author} <button className="view" onClick={toggleVisibility}>view</button></p>
       </div>
       {visible && (
         <div>
-          <p>{blog.url}</p>
-          <p>{blog.likes} <button onClick={addLike}>Like</button></p>
-          <p>{blog.user.username}</p>
+          <p className="url">{blog.url}</p>
+          <p className="likes">{blog.likes} <button className="addLike" onClick={addLike}>Like</button></p>
+          <p className="username">{blog.user.username}</p>
           {showDeleteButton(blog.user.id) && (
-            <button onClick={deleteBlog}>Remove</button>
+            <button className="delete" onClick={deleteBlog}>Remove</button>
           )
           }
         </div>
