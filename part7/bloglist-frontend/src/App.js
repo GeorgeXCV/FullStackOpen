@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
+import { Switch, Route, useLocation } from "react-router-dom";
 import { initializeBlogs, addBlog, addLike, deleteBlog } from './reducers/blogReducer'
 import { newNotification } from './reducers/notificationReducer'
 import { setUser } from './reducers/userReducer'
@@ -8,6 +9,8 @@ import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
 import Togglable from './components/Togglable'
 import Notification from './components/Notification'
+import User from './components/User'
+import Users from './components/Users'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import './App.css'
@@ -15,6 +18,7 @@ import './App.css'
 const App = () => {
   const blogFormRef = useRef()
   const dispatch  = useDispatch()
+  const location = useLocation();
   const blogs = useSelector(state => state.blog)
   const message = useSelector(state => state.notification)
   const user = useSelector(state => state.user)
@@ -102,15 +106,27 @@ const App = () => {
             <LoginForm handleLogin={handleLogin} /> :
             <div>
               <p>{user.name} logged-in <button type="submit" onClick={handleLogout}>logout</button> </p>
+              <Switch>
+                <Route path="/users/:id">
+                  {location.state &&
+                     <User user={location.state.user}/>
+                  }
+                </Route>
+                <Route path="/users">
+                  <Users />
+                </Route>
+                <Route path="/">
                 {<Togglable buttonLabel="New Blog" ref={blogFormRef} >
                 <BlogForm handleBlogChange={handleBlogChange}/>
                 </Togglable>
                 }
+                {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
+                <Blog key={blog.id} blog={blog} handleAddLike={handleAddLike} handleDeleteBlog={handleDeleteBlog}/>
+                )}
+                </Route>
+              </Switch>
             </div>
         }
-        {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
-          <Blog key={blog.id} blog={blog} handleAddLike={handleAddLike} handleDeleteBlog={handleDeleteBlog}/>
-        )}
       </div>
     )
   }
