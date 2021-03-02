@@ -1,12 +1,8 @@
 import React, { useState } from 'react'
+import { Link } from 'react-router-dom'
 import blogService from '../services/blogs'
 
 const Blog = ({ blog, handleAddLike, handleDeleteBlog }) =>  {
-  const [visible, setVisible] = useState(false)
-
-  const toggleVisibility = () => {
-    setVisible(!visible)
-  }
 
   const addLike = () => {
     handleAddLike(blog)
@@ -40,9 +36,9 @@ const Blog = ({ blog, handleAddLike, handleDeleteBlog }) =>  {
   return (
     <div style={blogStyle}>
       <div>
-        <p className="headline">{blog.title} {blog.author} <button className="view" onClick={toggleVisibility}>view</button></p>
+        <p className="headline"><Link to={{ pathname: `/blogs/${blog.id}`, state: {blog: blog} }}>{blog.title} {blog.author} </Link></p>
       </div>
-      {visible && (
+      {/* {visible && (
         <div>
           <p className="url">{blog.url}</p>
           <p className="likes">{blog.likes} <button className="addLike" onClick={addLike}>Like</button></p>
@@ -52,7 +48,7 @@ const Blog = ({ blog, handleAddLike, handleDeleteBlog }) =>  {
           )
           }
         </div>
-      )}
+      )} */}
     </div>
   )
 }

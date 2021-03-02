@@ -1,10 +1,11 @@
 import React, { useEffect, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { Switch, Route, useLocation } from "react-router-dom";
+import { Switch, Route, useLocation, Link } from "react-router-dom";
 import { initializeBlogs, addBlog, addLike, deleteBlog } from './reducers/blogReducer'
 import { newNotification } from './reducers/notificationReducer'
 import { setUser } from './reducers/userReducer'
 import Blog from './components/Blog'
+import BlogDetails from './components/BlogDetails'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
 import Togglable from './components/Togglable'
@@ -87,6 +88,19 @@ const App = () => {
     }
   }
 
+  const menu =  {
+    backgroundColor: '#B0B0B0',
+    paddingTop: 5,
+    paddingBottom: 5,
+    paddingLeft: 2,
+    borderWidth: 1,
+    marginBottom: 5
+  }
+
+  const padding = {
+    paddingRight: 5
+  }
+
   if (user === null) {
     return (
       <div>
@@ -105,8 +119,16 @@ const App = () => {
           user === null ?
             <LoginForm handleLogin={handleLogin} /> :
             <div>
-              <p>{user.name} logged-in <button type="submit" onClick={handleLogout}>logout</button> </p>
+              <p style={menu}>
+              <Link to='/' style={padding}>Blogs</Link>
+              <Link to='/users' style={padding}>Users</Link>
+                {user.name} logged-in <button type="submit" onClick={handleLogout}>logout</button> </p>
               <Switch>
+                <Route path="/blogs/:id">
+                  {location.state &&
+                     <BlogDetails blog={location.state.blog}/>
+                  }
+                </Route>
                 <Route path="/users/:id">
                   {location.state &&
                      <User user={location.state.user}/>
