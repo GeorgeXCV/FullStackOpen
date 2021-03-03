@@ -17,9 +17,19 @@ const getAll = async () => {
   return request.data
 }
 
+const getBlog = async (id) => {
+  const response = await axios.get(`${baseUrl}/${id}`)  
+  return response.data
+}
+
 const create = async (newObject) => {
   const config = { headers: { Authorization: token }, }
   const response = await axios.post(baseUrl, newObject, config)
+  return response.data
+}
+
+const comment = async (id, comment) => {
+  const response = await axios.post(`${baseUrl}/${id}/comments`, { comment })  
   return response.data
 }
 
@@ -35,5 +45,5 @@ const deleteBlog = async (id) => {
   return request.data
 }
 
-export default {  getCurrrentUser, getAll, create, update, deleteBlog, setToken }
+export default {  getCurrrentUser, getAll, getBlog, create, comment, update, deleteBlog, setToken }
 
