@@ -32,7 +32,7 @@ const BlogDetails = ({ blog }) => {
 					<p>{`Added by ${currentBlog.author}`}</p>
 					<h3>Comments</h3>
 					<form onSubmit={handleAddComment}>
-					 <input type="text" name="comment" />
+					 <input type="text" name="comment" placeholder="Enter a comment here"/>
 					  <button type="submit">Add Comment</button>
 					</form>
 					<ul>

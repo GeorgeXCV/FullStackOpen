@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Form, Button } from 'react-bootstrap'
 
 const BlogForm = ({ handleBlogChange  }) => {
   const [title, setTitle] = useState('')
@@ -13,23 +14,38 @@ const BlogForm = ({ handleBlogChange  }) => {
     setURL('')
   }
 
-  return (
-    <form onSubmit={onSubmit}>
-      <div>
-        <h2>Create New</h2>
-        <div>
-      Title: <input type="text" value={title} name="Title" onChange={({ target }) => setTitle(target.value)}/>
-        </div>
-        <div>
-      Author: <input type="text" value={author} name="Author" onChange={({ target }) => setAuthor(target.value)}/>
-        </div>
-        <div>
-      URL: <input type="text" value={url} name="URL" onChange={({ target }) => setURL(target.value)}/>
-        </div>
-        <button className="submitButton" type="submit">Create</button>
-      </div>
+  const padding = {
+    paddingLeft: 5
+  }
 
-    </form>
+  return (
+    <Form onSubmit={onSubmit}>
+      <Form.Group>
+        <h2>Create New</h2>
+        <Form.Label style={padding}>Title:</Form.Label>
+        <Form.Control
+             type="text" 
+             value={title} 
+             name="Title"
+              onChange={({ target }) => setTitle(target.value)}
+        />
+        <Form.Label style={padding}>Author:</Form.Label>
+        <Form.Control
+            type="text" 
+            value={author} 
+            name="Author" 
+            onChange={({ target }) => setAuthor(target.value)}
+        />
+        <Form.Label style={padding}>URL:</Form.Label>
+        <Form.Control
+            type="text" 
+            value={url} 
+            name="URL" 
+            onChange={({ target }) => setURL(target.value)}
+        />
+       <Button variant="primary" className="submitButton" type="submit">Create</Button>
+       </Form.Group>
+    </Form>
   )
 }
 

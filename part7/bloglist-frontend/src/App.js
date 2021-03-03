@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import { Switch, Route, useLocation, Link } from "react-router-dom";
+import { Table, Navbar, Nav } from 'react-bootstrap'
 import { initializeBlogs, addBlog, addLike, deleteBlog } from './reducers/blogReducer'
 import { newNotification } from './reducers/notificationReducer'
 import { setUser } from './reducers/userReducer'
@@ -113,16 +114,29 @@ const App = () => {
   } else {
     return (
       <div>
-        <h1>Blogs</h1>
-        <Notification message={message} />
         {
           user === null ?
             <LoginForm handleLogin={handleLogin} /> :
             <div>
-              <p style={menu}>
-              <Link to='/' style={padding}>Blogs</Link>
+              <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark"> 
+              <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+              <Navbar.Collapse id="responsive-navbar-nav">
+              <Nav className="mr-auto">
+              <Nav.Link href="#" as="span">
+              <Link to='/' style={padding}>Home</Link>
+              </Nav.Link>
+              <Nav.Link href="#" as="span">
+              <Link to='/blogs' style={padding}>Blogs</Link>
+              </Nav.Link>
+              <Nav.Link href="#" as="span">
               <Link to='/users' style={padding}>Users</Link>
-                {user.name} logged-in <button type="submit" onClick={handleLogout}>logout</button> </p>
+              </Nav.Link>
+              <Nav.Link href="#" as="span">
+                {user.name} logged-in <button type="submit" onClick={handleLogout}>logout</button>
+              </Nav.Link>
+              </Nav>
+              </Navbar.Collapse>
+              </Navbar>
               <Switch>
                 <Route path="/blogs/:id">
                   {location.state &&
@@ -138,13 +152,18 @@ const App = () => {
                   <Users />
                 </Route>
                 <Route path="/">
+             
+                <h1>Blogs</h1>
+                <Notification message={message} />
                 {<Togglable buttonLabel="New Blog" ref={blogFormRef} >
                 <BlogForm handleBlogChange={handleBlogChange}/>
                 </Togglable>
                 }
+                <Table striped hover >
                 {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
                 <Blog key={blog.id} blog={blog} handleAddLike={handleAddLike} handleDeleteBlog={handleDeleteBlog}/>
                 )}
+                </Table>
                 </Route>
               </Switch>
             </div>

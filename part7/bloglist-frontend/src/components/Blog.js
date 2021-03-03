@@ -34,11 +34,20 @@ const Blog = ({ blog, handleAddLike, handleDeleteBlog }) =>  {
   }
 
   return (
-    <div style={blogStyle}>
-      <div>
-        <p className="headline"><Link to={{ pathname: `/blogs/${blog.id}`, state: {blog: blog} }}>{blog.title} {blog.author} </Link></p>
-      </div>
-      {/* {visible && (
+    <tbody>
+    <tr key={blog.id}>
+    <td> 
+      <Link to={{ pathname: `/blogs/${blog.id}`, state: {blog: blog} }}>
+      {blog.title} 
+      </Link>
+    </td>
+    <td>
+      {blog.author} 
+    </td>
+    {/* <p className="headline"><Link to={{ pathname: `/blogs/${blog.id}`, state: {blog: blog} }}>{blog.title} {blog.author} </Link></p> */}
+    </tr>
+    </tbody>
+     /* { {visible && (
         <div>
           <p className="url">{blog.url}</p>
           <p className="likes">{blog.likes} <button className="addLike" onClick={addLike}>Like</button></p>
@@ -48,8 +57,7 @@ const Blog = ({ blog, handleAddLike, handleDeleteBlog }) =>  {
           )
           }
         </div>
-      )} */}
-    </div>
+      )} } */
   )
 }
 
