@@ -1,0 +1,26 @@
+{
+  "name": "library-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "start": "node index.js",
+    "dev": "cross-env NODE_ENV=development node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GeorgeXCV/FullStackOpen.git"
+  },
+  "author": "George Ashton",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GeorgeXCV/FullStackOpen/issues"
+  },
+  "homepage": "https://github.com/GeorgeXCV/FullStackOpen#readme",
+  "dependencies": {
+    "apollo-server": "^2.21.0",
+    "graphql": "^15.5.0"
+  }
+}
