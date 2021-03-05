@@ -1,4 +1,5 @@
 const { ApolloServer, gql } = require('apollo-server')
+const { v1: uuid } = require('uuid')
 
 let authors = [
   {
@@ -97,8 +98,18 @@ const typeDefs = gql`
   type Query {
     bookCount: Int!
     authorCount: Int!
-    allBooks(author: String): [Book!]!
+    allBooks(author: String, genre: String): [Book!]!
     allAuthors: [Author!]
+  }
+
+  type Mutation {
+    addBook(
+      title: String!
+      published: Int!
+      author: String!
+      genres: [String!]!
+    ): Book
+    editAuthor(name: String!, setBornTo: Int!): Author
   }
 `
 
@@ -108,18 +119,50 @@ const resolvers = {
     authorCount: () => authors.length,
     allAuthors: () => authors,
     allBooks: (root, args) => {
-      if (!args.author) {
+      if (!args.author && !args.genre) {
         return books
       }
-      return books.filter((book) => book.author === args.author)
+      if (args.author) {
+        return books.filter((book) => book.author === args.author)
+      } 
+      if (args.genre) {
+        return books.filter((book) => book.genres.includes(args.genre))
+      }
     },
   },
   Author: {
     bookCount: (root) => {      
         return books.filter(book => book.author === root.name).length
     }
+  },
+  Mutation: {
+    addBook: (root, args) => {
+      const existingAuthor = authors.find((author) => author.name === args.author)
+      if (!existingAuthor) {
+        const newAuthor = {
+          name: args.author,
+          id: uuid()
+        }
+        authors = authors.concat(newAuthor)
+      }
+      const newBook = { ...args, id: uuid() }
+      books = books.concat(newBook)
+      return newBook
+    },
+    editAuthor: (root, args) => {
+      const existingAuthor = authors.find((author) => author.name === args.name)
+      if (!existingAuthor) {
+          return null
+      }
+      const updatedAuthor = { ...existingAuthor, born: args.setBornTo }
+      authors = authors.map((author => 
+        author.name === updatedAuthor.name ?
+        updatedAuthor : author
+        ))
+        return updatedAuthor
+      }
+    }
   }
-}
 
 const server = new ApolloServer({
   typeDefs,
