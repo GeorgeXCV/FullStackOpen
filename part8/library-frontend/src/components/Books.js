@@ -1,9 +1,38 @@
-import React from 'react'
+import React , { useState, useEffect } from 'react'
 import { useQuery } from '@apollo/client';
 import { ALL_BOOKS } from '../queries'
 
 const Books = (props) => {
   const result = useQuery(ALL_BOOKS)
+  const [books, setBooks] = useState([])
+  const [genre, setGenre] = useState('All Genres')
+  const [genres, setGenres] = useState(['All Genres'])
+  const [filteredBooks, setFilteredBooks] = useState(['All Genres'])
+
+  useEffect(() => {
+    if (result.data) {
+      const allBooks = result.data.allBooks
+      setBooks(allBooks)
+      allBooks.forEach(book => {
+         if (book.genres) {
+           book.genres.forEach(genre => {
+              if (!genres.includes(genre)) {
+                  genres.push(genre)
+              }
+           })
+         }
+      });
+    }
+  }, [result])
+
+  useEffect(() => {
+    if (genre === 'All Genres') {
+      setFilteredBooks(books)
+    } else {
+      const booksFilter = books.filter((book) => book.genres.includes(genre))
+      setFilteredBooks(booksFilter)
+    }
+  }, [genre, books])
 
   if (result.loading)  {
     return <div>loading...</div>
@@ -13,28 +42,28 @@ const Books = (props) => {
     return null
   }
 
-  const books = result.data.allBooks
-
   return (
     <div>
-      <h2>books</h2>
-
+      <h2>Books</h2>
+      {genres.map(genre =>
+            <button key={genre} onClick={() => setGenre(genre)}>{genre}</button>
+          )}
       <table>
         <tbody>
           <tr>
             <th></th>
             <th>
-              author
+              Author
             </th>
             <th>
-              published
+              Published
             </th>
           </tr>
-          {books.map(a =>
-            <tr key={a.title}>
-              <td>{a.title}</td>
-              <td>{a.author}</td>
-              <td>{a.published}</td>
+          {filteredBooks.map(book =>
+            <tr key={book.title}>
+              <td>{book.title}</td>
+              <td>{book.author.name}</td>
+              <td>{book.published}</td>
             </tr>
           )}
         </tbody>

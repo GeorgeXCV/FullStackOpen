@@ -6,7 +6,18 @@ const Authors = (props) => {
   const result = useQuery(ALL_AUTHORS)
 
   const [changeAuthor] = useMutation(EDIT_AUTHOR, {
-    refetchQueries: [{ query: ALL_AUTHORS }],
+    update: (store, response) => {
+      const dataInStore = store.readQuery({ query: ALL_AUTHORS })
+      const editAuthor = response.data.editAuthor
+      store.writeQuery({
+        query: ALL_AUTHORS,
+        data: {
+          allAuthors: dataInStore.allAuthors.map((author) =>
+            author.name === editAuthor.name ? editAuthor : author
+          ),
+        },
+      })
+    },
   })
 
   if (result.loading)  {
@@ -29,16 +40,16 @@ const Authors = (props) => {
 
   return (
     <div>
-      <h2>authors</h2>
+      <h2>Authors</h2>
       <table>
         <tbody>
           <tr>
             <th></th>
             <th>
-              born
+              Born
             </th>
             <th>
-              books
+              Books
             </th>
           </tr>
           {authors.map(a =>
