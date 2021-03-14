@@ -1,15 +1,49 @@
 import React, { useEffect } from 'react';
-import { Icon } from "semantic-ui-react";
+import { Button, Icon } from "semantic-ui-react";
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { apiBaseUrl } from '../constants';
-import { Patient, Gender, Entry, Diagnosis } from '../types';
-import { useStateValue, setPatient, setDiagnoses } from "../state";
+import { Patient, Gender, Entry, Diagnosis, newEntry } from '../types';
+import { useStateValue, setPatient, setDiagnoses, addPatientEntry } from "../state";
 import EntryDetails from '../components/EntryDetails';
+import HealthCheckEntryForm from '../AddPatientEntryModal/HealthCheckEntryForm';
+import HospitalEntryForm from '../AddPatientEntryModal/HosptialEntryForm';
+import OccupationalHealthcareEntryForm from '../AddPatientEntryModal/OccupationalHealthcareEntryForm';
 
 const PatientInformationPage = () => {
   const { id } = useParams<{ id: string }>();
   const [{ patient, diagnoses }, dispatch] = useStateValue();
+
+  const [modalOpen, setModalOpen] = React.useState<boolean>(false);
+  const [error, setError] = React.useState<string | undefined>();
+  const [activeType, setActiveType] = React.useState<string | undefined>();
+
+  const openModal = (): void => setModalOpen(true);
+
+  const closeModal = (): void => {
+    setModalOpen(false);
+    setError(undefined);
+    setActiveType('');
+  };
+
+  const setType = (selectedType: string): void => {
+      setActiveType(selectedType);
+      openModal();
+  };
+
+  const submitNewEntry = async (values: newEntry) => {
+    try {
+      const { data: newEntryDetails } = await axios.post<Entry>(
+        `${apiBaseUrl}/patients/${id}/entries`,
+        values
+      );
+      dispatch(addPatientEntry(id, newEntryDetails));
+      closeModal();
+    } catch (e) {
+      console.error(e.response.data);
+      setError(e.response.data);
+    }
+  };
 
   useEffect(() => {
   
@@ -67,6 +101,42 @@ const PatientInformationPage = () => {
               <div><b>SSN:</b> {patient.ssn} </div>
               <div><b>Occupation:</b> {patient.occupation} </div>
               <h2>Entries</h2>
+              <Button onClick={() => setType('HealthCheck')}>
+                HealthCheck Entry 
+                <Icon name="heartbeat"/>
+              </Button>
+              <Button onClick={() => setType('Hospital')}>
+                Hospital Entry 
+                <Icon name="hospital"/> 
+              </Button>
+              <Button onClick={() => setType('Occupational Healthcare')}>
+                OccupationalHealthCare Entry 
+                <Icon name="doctor"/>
+              </Button>
+              {activeType === 'HealthCheck' && (
+                 <HealthCheckEntryForm
+                 modalOpen={modalOpen}
+                 onSubmit={submitNewEntry}
+                 error={error}
+                 onCancel={closeModal}
+               />
+              )}
+              {activeType === 'Hospital' && (
+                <HospitalEntryForm
+                modalOpen={modalOpen}
+                onSubmit={submitNewEntry}
+                error={error}
+                onCancel={closeModal}
+                />
+              )}
+              {activeType === 'Occupational Healthcare' && (
+              <OccupationalHealthcareEntryForm
+                modalOpen={modalOpen}
+                onSubmit={submitNewEntry}
+                error={error}
+                onCancel={closeModal}
+              />
+              )}
               {patient.entries.map((entry: Entry) => {
                 return (
                   <div key={entry.id}>

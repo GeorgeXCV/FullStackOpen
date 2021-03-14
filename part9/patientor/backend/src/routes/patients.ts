@@ -1,5 +1,5 @@
 import express from 'express';
-import toNewPatientEntry from '../utils'
+import { toNewPatientEntry, toNewEntry } from '../utils'
 import patientsService from '../services/patientsService';
 
 const router = express.Router();
@@ -11,7 +11,6 @@ router.get('/', (_req, res) => {
 router.post('/', (req, res) => {
   try {
       const newPatientEntry = toNewPatientEntry(req.body)
-      console.log(newPatientEntry)
       const addedEntry = patientsService.addPatient(newPatientEntry);
       res.send(addedEntry);
   } catch (error) {
@@ -27,6 +26,18 @@ router.get('/:id', (req, res) => {
     return res.send(patient)
   } else {
     return res.status(400).send({message: 'Failed to find patient with ID.'})
+  }
+});
+
+router.post('/:id/entries', (req, res) => {
+  const id  = req.params.id;
+  try {
+    const newPatientEntry = toNewEntry(req.body);
+    const addedEntry = patientsService.addPatientEntry(id, newPatientEntry);
+    res.json(addedEntry);
+  } catch (error) {
+     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    res.status(400).send(error.message);
   }
 });
 

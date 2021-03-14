@@ -66,5 +66,4 @@ const HealthCheck: React.FC<{ entry: HealthCheckEntry }> = ({ entry }) => {
     );
 };
 
-
  export default EntryDetails;
